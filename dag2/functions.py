@@ -39,4 +39,6 @@ def detect_ranges(L1):
     ranges.append(current)
     return ranges
 
-
+def enumeratorFag(fagListe):
+    ny_dict = {i: fag for i, fag in enumerate(fagListe, start=1)}
+    return ny_dict

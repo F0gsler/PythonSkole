@@ -4,6 +4,7 @@
 import math
 import base64
 import functions
+import aktivitetsdag
 
 
 
@@ -22,6 +23,8 @@ def argumentSeparator():
     print("Vælg 10 for at se ”Comprehension”")
     print("Vælg 11 for merge")
     print("Vælg 12 for range")
+    print("Vælg 13 for enumerator")
+    print("Vælg 14 for aktivitetsdag")
 
 
     valg = input("Indtast hvilken valg: ")
@@ -214,3 +217,55 @@ def argumentSeparator():
         L1 = [2,5,4,8,12,6,7,10,13]
         new_range = functions.detect_ranges(L1)
         print("Ny liste: ", new_range)
+    elif valg == "13":
+        fagListe = ['Python', 'BigData', 'Serversideprogrammering']
+ 
+        ny_datastruktur = functions.enumeratorFag(fagListe)
+ 
+        print("# Enumerator: menu af fag")
+        print("Original list: ", fagListe)
+        print("Comprehension kode brugt: ", "{i: fag for i, fag in enumerate(fagListe, start=1)}")
+        print("Ny datastruktur: ", ny_datastruktur)
+ 
+        for nummer, fag in ny_datastruktur.items():
+            print(f"[{nummer}] {fag}")
+ 
+        fagValg = input("Vælg et fag (vælg 1, 2 eller 3): ")
+ 
+        if fagValg.isdigit() and int(fagValg) in ny_datastruktur:
+            print("Du valgte: ", ny_datastruktur[int(fagValg)])
+        else:
+            print("Ugyldigt valg.")
+    elif valg == "14":
+        aktiviteter = aktivitetsdag.mergeAktiviteter(aktivitetsdag.kapacitet, aktivitetsdag.lokaler, aktivitetsdag.laerere)
+ 
+        antalKlasser = aktivitetsdag.laesTal("Hvor mange klasser deltager: ")
+        klasser = aktivitetsdag.indlaesKlasser(antalKlasser)
+ 
+        elever = aktivitetsdag.antalElever(klasser)
+        pladser = aktivitetsdag.antalPladser(aktiviteter)
+ 
+        print("Deltagende klasser: ")
+        for nr, klasse in enumerate(klasser, start=1):
+            print(f"[{nr}] {klasse} med {klasser[klasse]} elever")
+        print("Elever i alt: ", elever)
+ 
+        print("Aktiviteter: ")
+        for navn, info in aktiviteter.items():
+            print(f"{navn}, max {info['max']} deltager, {info['lokale']}, {info['laerer']}")
+        print("Pladser i alt: ", pladser)
+ 
+        if pladser >= elever:
+            print("Der er plads nok til alle elever.")
+        else:
+            print("Der er ikke plads nok til alle elever.")
+ 
+        print("Aktiviteter der kan rumme en hel klasse: ")
+        for klasse in klasser:
+            print(f"{klasse}: ", aktivitetsdag.helKlasse(aktiviteter, klasser[klasse]))
+ 
+        plan, ledig = aktivitetsdag.fordelKlasser(klasser, aktiviteter)
+        print("Forslag til fordeling: ")
+        for aktivitet in plan:
+            print(f"{aktivitet}: ", plan[aktivitet], f"({ledig[aktivitet]} pladser tilbage)")
+ 
