@@ -20,7 +20,7 @@ def indlæsKlasser(antalKlasser):
     ny_dict = {}
     for nr in range(1, antalKlasser + 1):
         key = input(f"Navn på klasse {nr}: ")
-        value = laesTal(f"Antal elever i {key}: ")
+        value = læsTal(f"Antal elever i {key}: ")
         ny_dict[key] = value
     return ny_dict
 
