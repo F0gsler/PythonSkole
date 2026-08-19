@@ -6,44 +6,47 @@ laerere = {"Gaming": "Palle", "3D-print": "Henrik", "Robotbygning": "Søren", "P
 
 
 def mergeAktiviteter(kapacitet, lokaler, laerere):
-    ny_dict = {navn: {"max": kapacitet[navn], "lokale": lokaler[navn], "laerer": laerere[navn]} for navn in kapacitet}
+    ny_dict = {key: {"max": value, "lokale": lokaler[key], "laerer": laerere[key]} for key, value in kapacitet.items()}
     return ny_dict
 
-def laesTal(besked):
+def læsTal(besked):
     tal = input(besked)
     while not tal.isdigit():
         print("Indtast et tal.")
         tal = input(besked)
     return int(tal)
 
-def indlaesKlasser(antalKlasser):
-    klasser = {}
+def indlæsKlasser(antalKlasser):
+    ny_dict = {}
     for nr in range(1, antalKlasser + 1):
-        navn = input(f"Navn på klasse {nr}: ")
-        elever = laesTal(f"Antal elever i {navn}: ")
-        klasser[navn] = elever
-    return klasser
+        key = input(f"Navn på klasse {nr}: ")
+        value = laesTal(f"Antal elever i {key}: ")
+        ny_dict[key] = value
+    return ny_dict
 
 def antalElever(klasser):
-    ny_list = [elever for elever in klasser.values()]
-    return sum(ny_list)
+    return sum(klasser.values())
 
 def antalPladser(aktiviteter):
-    ny_list = [info["max"] for info in aktiviteter.values()]
-    return sum(ny_list)
+    ny_dict = {key: value["max"] for key, value in aktiviteter.items()}
+    return sum(ny_dict.values())
 
 def helKlasse(aktiviteter, elever):
-    ny_list = [navn for navn, info in aktiviteter.items() if info["max"] >= elever]
-    return ny_list
+    ny_dict = {key: value["max"] for key, value in aktiviteter.items() if value["max"] >= elever}
+    return ny_dict
+
+def mulighederPrKlasse(aktiviteter, klasser):
+    ny_dict = {key: helKlasse(aktiviteter, value) for key, value in klasser.items()}
+    return ny_dict
 
 def fordelKlasser(klasser, aktiviteter):
-    ledig = {navn: info["max"] for navn, info in aktiviteter.items()}
-    plan = {navn: [] for navn in aktiviteter}
+    ledig = {key: value["max"] for key, value in aktiviteter.items()}
+    plan = {key: {} for key in aktiviteter.keys()}
 
-    for klasse in klasser:
-        for aktivitet in plan:
-            if ledig[aktivitet] >= klasser[klasse]:
-                plan[aktivitet].append(klasse)
-                ledig[aktivitet] -= klasser[klasse]
+    for klasse, elever in klasser.items():
+        for aktivitet in plan.keys():
+            if ledig[aktivitet] >= elever:
+                plan[aktivitet][klasse] = elever
+                ledig[aktivitet] -= elever
                 break
     return plan, ledig
