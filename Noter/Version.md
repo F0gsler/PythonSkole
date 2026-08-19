@@ -1,2 +1,2 @@
-![Pip](Noter\py&pip.png)
-![Cpython](Noter\CPython.png)
+![Pip](py&pip.png)
+![Cpython](CPython.png)
