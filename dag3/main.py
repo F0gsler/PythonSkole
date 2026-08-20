@@ -20,8 +20,9 @@ students = []
 
 
 def ask_name(prompt):
+    """0 = fortryd og gaa tilbage til menuen."""
     while True:
-        name = input(prompt).strip()
+        name = input(prompt + "(0 = tilbage) ").strip()
         if name == "0":
             return None
         if name != "":
@@ -32,6 +33,8 @@ def ask_name(prompt):
 def choose(options, prompt):
     for i in range(len(options)):
         print("[" + str(i + 1) + "] " + options[i])
+
+    print("[0] Tilbage")
 
     while True:
         valg = input(prompt).strip()
@@ -67,13 +70,17 @@ def load_data():
                 students.append(Student(row[1], row[2], row[3]))
 
 
+def alle_personer():
+    """Faelles liste af Person-objekter (baade Teacher og Student)."""
+    return teachers + students
+
+
 def save_data():
     with open(DATA_FILE, "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
-        for teacher in teachers:
-            writer.writerow(teacher.to_row())
-        for student in students:
-            writer.writerow(student.to_row())
+        # Polymorfi/duck typing: samme kald, to forskellige klasser.
+        for person in alle_personer():
+            writer.writerow(person.to_row())
 
 
 def show_all_teachers():
@@ -202,6 +209,22 @@ def add_student():
     print(student.describe())
 
 
+def demo_polymorfi():
+    """Polymorfi: describe() kaldes paa Person-referencer, og hver
+    subklasse svarer med sin egen implementation."""
+    print()
+    print("Polymorfi - samme metodekald, forskellig opfoersel:")
+    personer = alle_personer()
+    if len(personer) == 0:
+        print("(opret en laerer eller elev foerst)")
+        return
+
+    for person in personer:
+        print()
+        print(type(person).__name__ + ":")
+        print(person.describe())
+
+
 def show_menu():
     print()
     print("--------------------------------")
@@ -210,6 +233,7 @@ def show_menu():
     print("[3] Opdater lærer")
     print("[4] Tilføj elev til fag")
     print("[5] SAVE and EXIT")
+    print("[6] Demo: polymorfi")
 
 
 def main():
@@ -217,7 +241,7 @@ def main():
 
     while True:
         show_menu()
-        valg = input("Vælg 1, 2, 3, 4 eller 5: ").strip()
+        valg = input("Vælg 1, 2, 3, 4, 5 eller 6: ").strip()
 
         if valg == "1":
             show_all_teachers()
@@ -230,8 +254,11 @@ def main():
         elif valg == "5":
             save_data()
             break
+        elif valg == "6":
+            demo_polymorfi()
         else:
             print("Ugyldigt valg.")
 
 
-main()
+if __name__ == "__main__":
+    main()

@@ -1,7 +1,9 @@
+"""2. Python matematisk og grafisk moduler (NumPy, Pandas, Matplotlib)."""
+
 import numpy
 import pandas
 
-import søjle_diagram
+import sojle_diagram
 
 elever = ["Marius", "Andreas", "Daniel", "Yosef", "Louie"]
 fag = ["Python I", "Big Data I", "Serverside programmering"]
@@ -25,7 +27,7 @@ def main():
 
     gennemsnit = dataframe.mean()
 
-    søjle_diagram.generer_søjle_diagram(
+    sojle_diagram.generer_soejle_diagram(
         fag,
         gennemsnit,
         "Gennemsnit pr. fag",
@@ -34,4 +36,5 @@ def main():
     )
 
 
-main()
+if __name__ == "__main__":
+    main()

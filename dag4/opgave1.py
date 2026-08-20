@@ -8,8 +8,19 @@ import requests
 API_URL = "https://api.fbi.gov/wanted/v1/list"
 PAGE_SIZE = 50
 
-SUBJECT_1 = "Most Wanted Fraudster"
-SUBJECT_2 = "Criminal Enterprise Investigations"
+# FBI's api afviser kald uden en almindelig User-Agent header.
+HEADERS = {"User-Agent": "Mozilla/5.0 (PythonSkole opgave)"}
+
+# Opgaveteksten naevner "Most Wanted Fraudster" og "ViCAP Missing Persons",
+# mens skaermbillederne viser "Criminal Enterprise Investigations".
+# Derfor hentes og vises alle tre subjects.
+SUBJECTS = [
+    ("Most Wanted Fraudster", "last seen", "Enter last seen location: "),
+    ("Criminal Enterprise Investigations", "Gang name", "Enter gang name: "),
+    ("ViCAP Missing Persons", "last seen", "Enter last seen location: "),
+]
+
+SUBJECT_NAVNE = [navn for navn, felt, spoerg in SUBJECTS]
 
 MAPPE = os.path.dirname(os.path.abspath(__file__))
 CSV_FIL = os.path.join(MAPPE, "fbi_data.csv")
@@ -40,7 +51,12 @@ def hent_data_fra_api():
     side = 1
 
     while True:
-        svar = requests.get(API_URL, params={"page": side, "pageSize": PAGE_SIZE}, timeout=30)
+        svar = requests.get(
+            API_URL,
+            params={"page": side, "pageSize": PAGE_SIZE},
+            headers=HEADERS,
+            timeout=30,
+        )
         svar.raise_for_status()
         data = svar.json()
 
@@ -52,7 +68,7 @@ def hent_data_fra_api():
             subjects = item.get("subjects")
             if subjects is None:
                 continue
-            if SUBJECT_1 not in subjects and SUBJECT_2 not in subjects:
+            if not any(navn in subjects for navn in SUBJECT_NAVNE):
                 continue
 
             person = {
@@ -82,6 +98,18 @@ def gem_csv(personer):
                 person["aliases"],
                 person["details"],
             ])
+
+
+def laes_csv():
+    """Fallback: laes den tidligere gemte csv, hvis API'et ikke kan naas."""
+    personer = []
+    if not os.path.exists(CSV_FIL):
+        return personer
+
+    with open(CSV_FIL, encoding="utf-8") as fil:
+        for raekke in csv.DictReader(fil):
+            personer.append(raekke)
+    return personer
 
 
 def hent_opdateringer():
@@ -141,29 +169,37 @@ def vis_og_opdater(personer, subject, felt_tekst, spoerg_tekst, opdateringer):
 
 def main():
     print("Henter data fra FBI API ...")
-    personer = hent_data_fra_api()
-    gem_csv(personer)
-    print("Gemte " + str(len(personer)) + " personer i " + CSV_FIL)
+    try:
+        personer = hent_data_fra_api()
+        gem_csv(personer)
+        print("Gemte " + str(len(personer)) + " personer i " + CSV_FIL)
+    except requests.RequestException as fejl:
+        print("Kunne ikke hente data fra API'et:", fejl)
+        personer = laes_csv()
+        if len(personer) == 0:
+            print("Der er heller ingen gemt csv-fil at laese fra. Afslutter.")
+            return
+        print("Bruger i stedet de " + str(len(personer)) + " personer fra " + CSV_FIL)
 
     opdateringer = hent_opdateringer()
 
     while True:
         print()
         print("--------------------------------")
-        print("[1] Show " + SUBJECT_1)
-        print("[2] Show " + SUBJECT_2)
-        valg = input("Vælg 1, eller 2: ").strip()
+        for i in range(len(SUBJECTS)):
+            print("[" + str(i + 1) + "] Show " + SUBJECTS[i][0])
+        print("[q] Afslut")
+        valg = input("Vælg 1, 2 eller 3: ").strip()
 
-        if valg == "1":
-            vis_og_opdater(personer, SUBJECT_1, "last seen",
-                           "Enter last seen location: ", opdateringer)
-        elif valg == "2":
-            vis_og_opdater(personer, SUBJECT_2, "Gang name",
-                           "Enter gang name: ", opdateringer)
-        elif valg.lower() == "q":
+        if valg.lower() == "q":
             break
+
+        if valg.isdigit() and 1 <= int(valg) <= len(SUBJECTS):
+            navn, felt_tekst, spoerg_tekst = SUBJECTS[int(valg) - 1]
+            vis_og_opdater(personer, navn, felt_tekst, spoerg_tekst, opdateringer)
         else:
             print("Ugyldigt valg.")
 
 
-main()
+if __name__ == "__main__":
+    main()
