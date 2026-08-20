@@ -1,7 +1,7 @@
 """2. Python matematisk og grafisk moduler (NumPy, Pandas, Matplotlib)."""
 
-import numpy
-import pandas
+import numpy as np
+import pandas as pd
 
 import sojle_diagram
 
@@ -11,12 +11,12 @@ karakterer_7_trins_skala = [-3, 0, 2, 4, 7, 10, 12]
 
 
 def main():
-    tilfaeldige_karakterer = numpy.random.choice(
+    tilfaeldige_karakterer = np.random.choice(
         karakterer_7_trins_skala,
         size=(len(elever), len(fag))
     )
 
-    dataframe = pandas.DataFrame(tilfaeldige_karakterer, index=elever, columns=fag)
+    dataframe = pd.DataFrame(tilfaeldige_karakterer, index=elever, columns=fag)
 
     for elev in elever:
         print(elev + " fik følgende karakterer:")

@@ -1,9 +1,9 @@
-import matplotlib.pyplot
+from matplotlib import pyplot as plt
 
 
 def generer_soejle_diagram(labels, data, titel, x_tekst, y_tekst):
-    matplotlib.pyplot.bar(labels, data)
-    matplotlib.pyplot.title(titel)
-    matplotlib.pyplot.xlabel(x_tekst)
-    matplotlib.pyplot.ylabel(y_tekst)
-    matplotlib.pyplot.show()
+    plt.bar(labels, data)
+    plt.title(titel)
+    plt.xlabel(x_tekst)
+    plt.ylabel(y_tekst)
+    plt.show()
