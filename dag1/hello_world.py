@@ -1,6 +1,9 @@
-def helloWorld():
-    print("\nHello World\n")
+"""hello_world.py - top-level kode der kan importeres uden at køre."""
 
-if __name__ == "__hello_world__":
-    world = "\nHello World\n"
-    print(world)
+
+def hello_world():
+    print("\nHello, World!\n")
+
+
+if __name__ == "__main__":
+    hello_world()

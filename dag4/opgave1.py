@@ -22,7 +22,6 @@ def rens_tekst(tekst):
     tekst = re.sub("<[^>]*>", " ", str(tekst))
     tekst = html.unescape(tekst)
     tekst = tekst.replace("\n", " ").replace("\r", " ").replace("\t", " ")
-    tekst = re.sub("[^\\S ]+", " ", tekst)
     tekst = re.sub(" +", " ", tekst)
     return tekst.strip()
 

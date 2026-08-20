@@ -1,3 +1,8 @@
+"""main.py - kører koden fra ovelse.py."""
+
 import ovelse
 
-ovelse.argumentSeparator()
+valg = ovelse.vis_menu()
+
+if valg == "3":
+    print(ovelse.__doc__)

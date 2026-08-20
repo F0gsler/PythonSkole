@@ -4,7 +4,8 @@ import os
 from teacher import Teacher
 from student import Student
 
-DATA_FILE = "data.csv"
+MAPPE = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(MAPPE, "data.csv")
 
 SUBJECTS = [
     "IoT_Embedded",
